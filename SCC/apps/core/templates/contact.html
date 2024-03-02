@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contatos</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        color: #333;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tr:hover {
+        background-color: #f2f2f2;
+      }
+      button {
+        padding: 6px 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Contatos</h1>
+    <button onclick="abrirModalCriarContato()">Criar Novo Contato</button>
+    <button onclick="listarContatos()">Listar Contatos</button>
+
+    <table id="tabelaContatos" style="display: none">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Criado em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="corpoTabelaContatos"></tbody>
+    </table>
+
+    <div id="modalCriarContato" style="display: none">
+      <h2>Criar Novo Contato</h2>
+      <form id="formCriarContato">
+        <label for="nomeCriar">Nome:</label>
+        <input type="text" id="nomeCriar" name="name" /><br />
+        <label for="emailCriar">Email:</label>
+        <input type="email" id="emailCriar" name="email" /><br />
+        <label for="telefoneCriar">Telefone:</label>
+        <input type="text" id="telefoneCriar" name="phone" /><br />
+        <button type="button" onclick="criarNovoContato()">Criar</button>
+      </form>
+    </div>
+
+    <div id="modalEditarContato" style="display: none">
+      <h2>Editar Contato</h2>
+      <form id="formEditarContato">
+        <input type="hidden" id="contatoId" name="id" />
+        <label for="nomeEditar">Nome:</label>
+        <input type="text" id="nomeEditar" name="name" /><br />
+        <label for="emailEditar">Email:</label>
+        <input type="email" id="emailEditar" name="email" /><br />
+        <label for="telefoneEditar">Telefone:</label>
+        <input type="text" id="telefoneEditar" name="phone" /><br />
+        <button type="button" onclick="salvarEdicaoContato()">Salvar</button>
+      </form>
+    </div>
+
+    <script>
+      // Funções JavaScript aqui...
+
+      function listarContatos() {
+        fetch("/contact/")
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            exibirContatos(data);
+          })
+          .catch((error) => console.error("Erro ao listar contatos:", error));
+      }
+
+      function exibirContatos(contatos) {
+        const tabela = document.getElementById("tabelaContatos");
+        const corpoTabela = document.getElementById("corpoTabelaContatos");
+
+        // Limpa o conteúdo atual da tabela
+        corpoTabela.innerHTML = "";
+
+        // Adiciona as linhas da tabela com os dados dos contatos
+        contatos.forEach((contato) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+                    <td>${contato.name}</td>
+                    <td>${contato.email}</td>
+                    <td>${contato.phone}</td>
+                    <td>${contato.creation}</td>
+                    <td>
+                        <button onclick="editarContato(${contato.id})">Editar</button>
+                        <button onclick="excluirContato(${contato.id})">Excluir</button>
+                    </td>
+                `;
+          corpoTabela.appendChild(tr);
+        });
+
+        // Exibe a tabela
+        tabela.style.display = "block";
+      }
+
+      function editarContato(id) {
+        fetch(`/contacts/${id}/`)
+          .then((response) => response.json())
+          .then((contato) => {
+            console.log("Abrir modal para editar:", contato);
+            preencherFormularioEditar(contato);
+            abrirModalEditarContato();
+          })
+          .catch((error) =>
+            console.error("Erro ao obter detalhes do contato:", error)
+          );
+      }
+
+      function preencherFormularioEditar(contato) {
+        document.getElementById("contatoId").value = contato.id;
+        document.getElementById("nomeEditar").value = contato.name;
+        document.getElementById("emailEditar").value = contato.email;
+        document.getElementById("telefoneEditar").value = contato.phone;
+      }
+
+      function abrirModalEditarContato() {
+        const modal = document.getElementById("modalEditarContato");
+        modal.style.display = "block";
+      }
+      function abrirModalCriarContato() {
+        const modal = document.getElementById("modalCriarContato");
+        modal.style.display = "block";
+      }
+
+      function criarNovoContato() {
+        const formData = new FormData(
+          document.getElementById("formCriarContato")
+        );
+        fetch("/contact/", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Novo contato criado:", data);
+            fecharModalCriarContato();
+            listarContatos();
+          })
+          .catch((error) =>
+            console.error("Erro ao criar novo contato:", error)
+          );
+      }
+
+      function fecharModalCriarContato() {
+        const modal = document.getElementById("modalCriarContato");
+        modal.style.display = "none";
+      }
+
+      function fecharModalEditarContato() {
+        const modal = document.getElementById("modalEditarContato");
+        modal.style.display = "none";
+      }
+
+      function salvarEdicaoContato() {
+        const formData = new FormData(
+          document.getElementById("formEditarContato")
+        );
+        const contatoId = formData.get("id");
+        fetch(`/contacts/${contatoId}/`, {
+          method: "PUT",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Contato atualizado:", data);
+            fecharModalEditarContato();
+            listarContatos();
+          })
+          .catch((error) => console.error("Erro ao atualizar contato:", error));
+      }
+
+      function excluirContato(id) {
+        if (confirm("Tem certeza que deseja excluir este contato?")) {
+          fetch(`/contacts/${id}/`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Erro ao excluir contato");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Contato excluído:", data);
+              listarContatos();
+            })
+            .catch((error) => console.error("Erro ao excluir contato:", error));
+        }
+      }
+    </script>
+  </body>
+</html>

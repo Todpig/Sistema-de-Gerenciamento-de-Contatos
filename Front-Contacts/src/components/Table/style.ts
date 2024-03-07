@@ -15,3 +15,7 @@ export const Tbody = styled.tbody`
     background-color: #f2f2f2;
   }
 `;
+
+export const Theading = styled.th`
+  text-align: left;
+`;

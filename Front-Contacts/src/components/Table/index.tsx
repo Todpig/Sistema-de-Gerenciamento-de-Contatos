@@ -1,4 +1,4 @@
-import { Table, Tbody, Thead } from "./style";
+import { Table, Tbody, Thead, Theading } from "./style";
 import moment from "moment";
 import { Contact } from "../../types/Contacts";
 import { ButtonComponent } from "../Button";
@@ -31,11 +31,11 @@ export function TableComponent({
       <Table>
         <Thead>
           <tr>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Criado em</th>
-            <th>Ações</th>
+            <Theading>Nome</Theading>
+            <Theading>Email</Theading>
+            <Theading>Telefone</Theading>
+            <Theading>Criado em</Theading>
+            <Theading>Ações</Theading>
           </tr>
         </Thead>
         <Tbody>

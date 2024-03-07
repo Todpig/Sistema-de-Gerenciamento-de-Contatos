@@ -5,20 +5,28 @@ import { ButtonComponent } from "../Button";
 import { useState } from "react";
 import { Modal } from "../Modal";
 
+type TableProps = {
+  contacts: Contact[];
+  deleteContact: (id: number) => void;
+  fetchContacts: () => void;
+};
+
 export function TableComponent({
   contacts,
   deleteContact,
-}: {
-  contacts: Contact[];
-  deleteContact: (id: number) => void;
-}) {
+  fetchContacts,
+}: TableProps) {
   const [showModal, setShowModal] = useState(false);
   const [contactUpdate, setContactUpdate] = useState<Contact>(contacts[0]);
 
   return (
     <>
       {showModal && contactUpdate && (
-        <Modal show={showModal} contact={contactUpdate} />
+        <Modal
+          show={showModal}
+          contact={contactUpdate}
+          fetchContacts={fetchContacts}
+        />
       )}
       <Table>
         <Thead>

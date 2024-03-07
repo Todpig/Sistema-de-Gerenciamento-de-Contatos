@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 interface ModalProps {
-  show: boolean;
+  $show: boolean;
 }
 
 export const ModalContainer = styled.div<ModalProps>`
@@ -11,7 +11,7 @@ export const ModalContainer = styled.div<ModalProps>`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  display: ${({ show }) => (show ? "flex" : "none")};
+  display: ${({ $show }) => ($show ? "flex" : "none")};
   justify-content: center;
   align-items: center;
 `;

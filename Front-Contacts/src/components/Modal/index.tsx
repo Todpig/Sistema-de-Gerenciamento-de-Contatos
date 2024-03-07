@@ -5,27 +5,30 @@ import { Form } from "../../pages/Contacts/style";
 import { ButtonComponent } from "../Button";
 import { apiBase } from "../../utils/baseUrl";
 
-export const Modal = ({
-  show,
-  contact,
-}: {
+type ModalProps = {
   show: boolean;
   contact: Contact;
-}) => {
+  fetchContacts: () => void;
+};
+
+export const Modal = ({ show, contact, fetchContacts }: ModalProps) => {
   const [contactUpdate, setContactUpdate] = useState<Contact>(contact);
   const [showModal, setShowModal] = useState(show);
 
   function handleUpdateContact() {
-    apiBase.put(`/contacts/${contact.id}/`, contactUpdate).catch((error) => {
-      console.log(error);
-    });
+    apiBase
+      .put(`/contacts/${contact.id}/`, contactUpdate)
+      .then(() => fetchContacts())
+      .catch((error) => {
+        console.log(error);
+      });
     setShowModal(false);
   }
 
   return (
     <>
       {showModal && contact && (
-        <ModalContainer show={showModal}>
+        <ModalContainer $show={showModal}>
           <ModalContent>
             <Form
               onSubmit={(e) => {

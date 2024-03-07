@@ -22,11 +22,14 @@ export function Contacts() {
   function fetchContacts() {
     apiBase.get("/contact/").then((res) => {
       setContacts(res.data);
-      console.log(res);
     });
   }
 
-  function createContact() {
+  function createContact() { function fetchContacts() {
+    apiBase.get("/contact/").then((res) => {
+      setContacts(res.data);
+    });
+  }
     apiBase
       .post("/contact/", newContact)
       .then(() => {
@@ -86,7 +89,7 @@ export function Contacts() {
         </ButtonComponent>
       </Form>
 
-      <TableComponent contacts={contacts} deleteContact={deleteContact} />
+      <TableComponent contacts={contacts} deleteContact={deleteContact} fetchContacts={fetchContacts}/>
     </Container>
   );
 }
